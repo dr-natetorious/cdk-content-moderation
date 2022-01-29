@@ -1,7 +1,8 @@
 {
-  "name": "aws-moderation",
+  "name": "@aws-moderation/constructs",
   "version": "0.1.0",
   "main": "lib/index.js",
+  "description": "The CDK High-Level Construct Library for Content Moderation",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
