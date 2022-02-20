@@ -8,7 +8,8 @@ import {
   aws_stepfunctions as sf,
   aws_stepfunctions_tasks as sft,
 } from 'aws-cdk-lib'
-
+import { PostModerateImage } from './api-sfn/images';
+import { PostModerateAudio } from './api-sfn/audio';
 
 export class ModerationApiStepFunctions extends Construct {
   
@@ -22,9 +23,11 @@ export class ModerationApiStepFunctions extends Construct {
   public gatewayRole: iam.Role;
 
   constructor(scope: Construct, id: string) {
-    super(scope, id);    
+    super(scope, id);
 
-    this.postModerateAudio = new sf.StateMachine(this,'PostAudio',{
+    this.postModerateAudio = new PostModerateAudio(this,'ModerateAudio').stateMachine;
+    
+    new sf.StateMachine(this,'PostAudio',{
       definition: new sf.Pass(this,'AudioPlaceholder'),
       stateMachineType: sf.StateMachineType.EXPRESS,
     });
@@ -34,10 +37,8 @@ export class ModerationApiStepFunctions extends Construct {
       stateMachineType: sf.StateMachineType.EXPRESS,
     });
 
-    this.postModerateImage = new sf.StateMachine(this,'PostImage',{
-      definition: new sf.Pass(this,'ImagePlaceholder'),
-      stateMachineType: sf.StateMachineType.EXPRESS,
-    });
+
+    this.postModerateImage = new PostModerateImage(this,'PostImage').stateMachine;
 
     this.postModerateText = new sf.StateMachine(this,'PostText',{
       definition: new sf.Pass(this,'TextPlaceholder'),
