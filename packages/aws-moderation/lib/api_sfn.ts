@@ -27,11 +27,6 @@ export class ModerationApiStepFunctions extends Construct {
 
     this.postModerateAudio = new PostModerateAudio(this,'ModerateAudio').stateMachine;
     
-    new sf.StateMachine(this,'PostAudio',{
-      definition: new sf.Pass(this,'AudioPlaceholder'),
-      stateMachineType: sf.StateMachineType.EXPRESS,
-    });
-
     this.postModerateDocument = new sf.StateMachine(this,'PostDocument',{
       definition: new sf.Pass(this,'DocPlaceholder'),
       stateMachineType: sf.StateMachineType.EXPRESS,
