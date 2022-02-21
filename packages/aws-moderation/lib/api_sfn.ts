@@ -11,6 +11,7 @@ import {
 import { PostModerateImage } from './api-sfn/images';
 import { PostModerateAudio } from './api-sfn/audio';
 import { PostModerateText } from './api-sfn/text';
+import { PostModerateDocument } from './api-sfn/document';
 
 export class ModerationApiStepFunctions extends Construct {
   
@@ -25,16 +26,13 @@ export class ModerationApiStepFunctions extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    this.postModerateAudio = new PostModerateAudio(this,'ModerateAudio').stateMachine;
+    this.postModerateAudio = new PostModerateAudio(this,'PostAudio').syncStateMachine;
     
-    this.postModerateDocument = new sf.StateMachine(this,'PostDocument',{
-      definition: new sf.Pass(this,'DocPlaceholder'),
-      stateMachineType: sf.StateMachineType.EXPRESS,
-    });
+    // this.postModerateDocument = new PostModerateDocument(this,'PostDocument').stateMachine;
 
-    this.postModerateImage = new PostModerateImage(this,'PostImage').stateMachine;
+    this.postModerateImage = new PostModerateImage(this,'PostImage').syncStateMachine;
 
-    this.postModerateText = new PostModerateText(this,'PostText').stateMachine;
+    this.postModerateText = new PostModerateText(this,'PostText').syncStateMachine;
 
     this.postModerateVideo= new sf.StateMachine(this,'PostVideo',{
       definition: new sf.Pass(this,'VideoPlaceholder'),

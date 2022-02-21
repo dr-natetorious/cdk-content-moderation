@@ -29,7 +29,7 @@ export class ModerationApi extends Construct {
        
     
     this.addModeratedResource('Audio', this.modSfn.postModerateAudio)
-    this.addModeratedResource('Document', this.modSfn.postModerateDocument)
+    //this.addModeratedResource('Document', this.modSfn.postModerateDocument)
     this.addModeratedResource('Image', this.modSfn.postModerateImage)
     this.addModeratedResource('Text', this.modSfn.postModerateText)
     this.addModeratedResource('Video', this.modSfn.postModerateVideo)

@@ -8,11 +8,11 @@ import {
   aws_stepfunctions as sf,
   aws_stepfunctions_tasks as sft,
 } from 'aws-cdk-lib'
+import { ISyncModerator } from './interface';
 
-
-export class PostModerateImage extends Construct {
+export class PostModerateImage extends Construct implements ISyncModerator {
   
-  public stateMachine: sf.IStateMachine;
+  public syncStateMachine: sf.IStateMachine;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -31,7 +31,7 @@ export class PostModerateImage extends Construct {
       }
     });
 
-    this.stateMachine = new sf.StateMachine(this,'Sfn',{
+    this.syncStateMachine = new sf.StateMachine(this,'Sfn',{
       definition: detect,
       stateMachineType: sf.StateMachineType.EXPRESS,
     });

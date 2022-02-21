@@ -9,7 +9,7 @@ import {
   aws_stepfunctions_tasks as sft,
   aws_lambda as lambda,
 } from 'aws-cdk-lib'
-
+import { ISyncModerator } from './interface';
 
 class SelectLanguageFunction extends Construct{
 
@@ -36,8 +36,8 @@ def process_event(event:dict, _:dict)->dict:
   }
 }
 
-export class PostModerateText extends Construct {
-  public stateMachine: sf.IStateMachine;
+export class PostModerateText extends Construct implements ISyncModerator {
+  public syncStateMachine: sf.IStateMachine;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -101,7 +101,7 @@ export class PostModerateText extends Construct {
     detectLanguage.next(selectLanguage).next(requiresTranslation)
     translateText.next(detectPiiEntries).next(detectSentiment).next(new sf.Pass(this,'Add-CodeHere'))
 
-    this.stateMachine = new sf.StateMachine(this,'StateMachine',{
+    this.syncStateMachine = new sf.StateMachine(this,'StateMachine',{
       definition: detectLanguage,
       stateMachineType: sf.StateMachineType.EXPRESS
     });

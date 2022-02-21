@@ -9,10 +9,11 @@ import {
   aws_stepfunctions_tasks as sft,
   Duration,
 } from 'aws-cdk-lib'
+import { ISyncModerator } from './interface';
 
-export class PostModerateAudio extends Construct {
+export class PostModerateAudio extends Construct implements ISyncModerator {
   
-  public stateMachine: sf.IStateMachine;
+  public syncStateMachine: sf.IStateMachine;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -75,7 +76,7 @@ export class PostModerateAudio extends Construct {
 
     startJob.next(getJobStatus).next(isComplete)
 
-    this.stateMachine = new sf.StateMachine(this,'StateMachine',{
+    this.syncStateMachine = new sf.StateMachine(this,'StateMachine',{
       definition: startJob,
       stateMachineType: sf.StateMachineType.EXPRESS,
     });
