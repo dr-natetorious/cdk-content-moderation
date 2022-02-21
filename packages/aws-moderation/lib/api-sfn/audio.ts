@@ -9,8 +9,6 @@ import {
   aws_stepfunctions_tasks as sft,
   Duration,
 } from 'aws-cdk-lib'
-import { WaitTime } from 'aws-cdk-lib/aws-stepfunctions';
-
 
 export class PostModerateAudio extends Construct {
   
@@ -36,7 +34,7 @@ export class PostModerateAudio extends Construct {
     });
 
     const wait = new sf.Wait(this,'Wait',{
-      time: WaitTime.duration(Duration.seconds(5))
+      time: sf.WaitTime.duration(Duration.seconds(5))
     })
 
     const getJobStatus = new sft.CallAwsService(this,'GetTranscriptionJob',{
@@ -45,7 +43,7 @@ export class PostModerateAudio extends Construct {
       iamResources:["*"],
       resultPath: '$.status',
       parameters:{
-        'TranscriptionJobName': '$.start.TranscriptionJob.TranscriptionJobName'
+        'TranscriptionJobName': '$.start.Payload.TranscriptionJob.TranscriptionJobName'
       }
     })
 
@@ -55,7 +53,7 @@ export class PostModerateAudio extends Construct {
 
     isComplete.when(
       sf.Condition.stringEquals(
-        '$.status.TranscriptionJob.TranscriptionJobStatus','FAILED'),
+        '$.status.Payload.TranscriptionJob.TranscriptionJobStatus','FAILED'),
         new sf.Fail(this,'TranscriptionFailed',{
           comment: 'Unable to complete transcription'
         }))
@@ -63,12 +61,13 @@ export class PostModerateAudio extends Construct {
     isComplete.when(
       sf.Condition.or(
         sf.Condition.stringEquals(
-          '$.status.TranscriptionJob.TranscriptionJobStatus','QUEUED'),
+          '$.status.Payload.TranscriptionJob.TranscriptionJobStatus','QUEUED'),
         sf.Condition.stringEquals(
-          '$.status.TranscriptionJob.TranscriptionJobStatus','IN_PROGRESS')
+          '$.status.Payload.TranscriptionJob.TranscriptionJobStatus','IN_PROGRESS')
         ),
       wait)
 
+    wait.next(getJobStatus)
 
     isComplete.otherwise(
       new sf.Pass(this,'Add-More-Here')
@@ -76,7 +75,7 @@ export class PostModerateAudio extends Construct {
 
     startJob.next(getJobStatus).next(isComplete)
 
-    this.stateMachine = new sf.StateMachine(this,'Sfn',{
+    this.stateMachine = new sf.StateMachine(this,'StateMachine',{
       definition: startJob,
       stateMachineType: sf.StateMachineType.EXPRESS,
     });

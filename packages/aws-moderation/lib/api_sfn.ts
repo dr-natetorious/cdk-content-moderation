@@ -10,9 +10,9 @@ import {
 } from 'aws-cdk-lib'
 import { PostModerateImage } from './api-sfn/images';
 import { PostModerateAudio } from './api-sfn/audio';
+import { PostModerateText } from './api-sfn/text';
 
 export class ModerationApiStepFunctions extends Construct {
-  
   
   public readonly postModerateAudio: sf.IStateMachine;
   public readonly postModerateDocument: sf.IStateMachine;
@@ -32,13 +32,9 @@ export class ModerationApiStepFunctions extends Construct {
       stateMachineType: sf.StateMachineType.EXPRESS,
     });
 
-
     this.postModerateImage = new PostModerateImage(this,'PostImage').stateMachine;
 
-    this.postModerateText = new sf.StateMachine(this,'PostText',{
-      definition: new sf.Pass(this,'TextPlaceholder'),
-      stateMachineType: sf.StateMachineType.EXPRESS,
-    });
+    this.postModerateText = new PostModerateText(this,'PostText').stateMachine;
 
     this.postModerateVideo= new sf.StateMachine(this,'PostVideo',{
       definition: new sf.Pass(this,'VideoPlaceholder'),
