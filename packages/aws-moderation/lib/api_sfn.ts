@@ -12,6 +12,7 @@ import { PostModerateImage } from './api-sfn/images';
 import { PostModerateAudio } from './api-sfn/audio';
 import { PostModerateText } from './api-sfn/text';
 import { PostModerateDocument } from './api-sfn/document';
+import { postModerateVideo } from './api-sfn/video';
 
 export class ModerationApiStepFunctions extends Construct {
   
@@ -26,18 +27,15 @@ export class ModerationApiStepFunctions extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    this.postModerateAudio = new PostModerateAudio(this,'PostAudio').syncStateMachine;
+    this.postModerateAudio = new PostModerateAudio(this,'Audio').syncStateMachine;
     
-    // this.postModerateDocument = new PostModerateDocument(this,'PostDocument').stateMachine;
+    this.postModerateDocument = new PostModerateDocument(this,'PostDocument').stateMachine;
 
-    this.postModerateImage = new PostModerateImage(this,'PostImage').syncStateMachine;
+    this.postModerateImage = new PostModerateImage(this,'Image').syncStateMachine;
 
-    this.postModerateText = new PostModerateText(this,'PostText').syncStateMachine;
+    this.postModerateText = new PostModerateText(this,'Text').syncStateMachine;
 
-    this.postModerateVideo= new sf.StateMachine(this,'PostVideo',{
-      definition: new sf.Pass(this,'VideoPlaceholder'),
-      stateMachineType: sf.StateMachineType.EXPRESS,
-    });
+    this.postModerateVideo= new postModerateVideo(this,'Video').syncStateMachine;
 
     // Create the role for an apigateway to call these operations.
     this.gatewayRole = new iam.Role(this,'GatewayRole',{

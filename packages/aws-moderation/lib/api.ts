@@ -25,7 +25,7 @@ export class ModerationApi extends Construct {
     })
 
     this.rootResource = gateway.root.addResource('Moderate');
-    this.modSfn = new ModerationApiStepFunctions(this,'Functions');
+    this.modSfn = new ModerationApiStepFunctions(this,'Post');
        
     
     this.addModeratedResource('Audio', this.modSfn.postModerateAudio)
